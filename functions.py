@@ -71,4 +71,68 @@ def create_random_road_map():
 
     return road_map
 
-    # pd.DataFrame(road_map).to_csv('road_map.csv')
+def initialise_driver_position(road_map):
+
+    ###
+    ### Getting the coordinates of all possible positions (horizontal/vertical roads, no junctions) 
+    ###
+
+    horizontal_roads = np.array(np.where(road_map==1)).T
+    vertical_roads = np.array(np.where(road_map==2)).T
+
+    all_roads = []
+    for coordinate in horizontal_roads:
+        all_roads.append([coordinate[0], coordinate[1]])
+    for coordinate in vertical_roads:
+        all_roads.append([coordinate[0], coordinate[1]])
+
+    ###
+    ### Assigning initial coordinates
+    ###
+
+    coordinates = random.choice(all_roads)
+    x = coordinates[0]
+    y = coordinates[1]
+
+    ###
+    ### Re-assigning the position if they begin at a junction
+    ###
+    while road_map[x-1][y] == 3 or road_map[x+1][y] == 3 or road_map[x][y-1] == 3 or road_map[x][y+1] == 3:
+        coordinates = random.choice(all_roads)
+        x = coordinates[0]
+        y = coordinates[1]
+
+    return [x, y]
+
+
+def initialise_driver_direction(x, y, road_map):
+
+    horizontal_roads = np.array(np.where(road_map==1)).T
+    horizontal_roads = [coordinate.tolist() for coordinate in horizontal_roads]
+
+    if [x, y] in horizontal_roads:
+
+        # Driver can only be going either left or right
+        # Choosing left or right depends on what lane they are in
+
+        if x == 0:
+            return "Right"
+        elif road_map[x-1][y] == 1:
+            return "Left"
+        else:
+            return "Right"
+
+    else:
+
+        # Driver can only be going either up or down
+        # Choosing up or down depends on what lane they are in
+
+        if y == 0:
+            return "Up"
+        elif road_map[x][y-1] == 1:
+            return "Down"
+        else:
+            return "Up"
+
+
+    return road_map[x][y]
