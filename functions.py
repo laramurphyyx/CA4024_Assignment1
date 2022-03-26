@@ -6,6 +6,30 @@ import random
 import numpy as np
 import pandas as pd
 
+directions = {
+    'Right' : [0, 1],
+    'Left' : [0, -1],
+    'Up' : [-1, 0],
+    'Down' : [1, 0]
+}
+opposite_directions = {
+    'Right' : 'Left',
+    'Left' : 'Right',
+    'Up' : 'Down',
+    'Down' : 'Up'
+}
+
+junction_paths = {
+    ("Left", "Up") : [3, 2, 0],
+    ("Left", "Down") : [3],
+    ("Right", "Up") : [0],
+    ("Right", "Down") : [0, 1, 3],
+    ("Up", "Left") : [2],
+    ("Up", "Right") : [2, 0, 1],
+    ("Down", "Left") : [1, 3, 2],
+    ("Down", "Right") : [1],
+    }
+
 def create_random_road_map():
 
     ###
@@ -106,7 +130,6 @@ def initialise_driver_position(road_map):
 
     return [x, y]
 
-
 def initialise_driver_direction(x, y, road_map):
 
     horizontal_roads = np.array(np.where(road_map==1)).T
@@ -138,7 +161,7 @@ def initialise_driver_direction(x, y, road_map):
 
     return road_map[x][y]
 
-def find_junction_direction_options(road_map, x, y):
+def find_coordinates_of_junction(road_map, x, y):
 
     coordinates_of_junction = []
 
@@ -148,6 +171,12 @@ def find_junction_direction_options(road_map, x, y):
                 if y_coord > 0 and y_coord < 50:
                     if road_map[x_coord][y_coord] == 3:
                         coordinates_of_junction.append([x_coord, y_coord])
+
+    return coordinates_of_junction
+
+def find_junction_direction_options(road_map, x, y):
+
+    coordinates_of_junction = find_coordinates_of_junction(road_map, x, y)
 
     # if x = 0 in any of them then 'up' is not an option
     # if x = 49 in any of them then 'down' is not an option
@@ -193,3 +222,31 @@ def find_junction_direction_options(road_map, x, y):
                     return ['Left', 'Down']
     else:
         return ['Right', 'Left', 'Up', 'Down']
+
+def move_driver_on_junction2(Driver, road_map):
+    current_direction = Driver.direction
+    new_direction = Driver.change_direction
+
+    if current_direction == new_direction:
+        self.x += directions[current_direction][0]
+        self.y += directions[current_direction][1]
+
+    else:
+
+        coordinates_of_junction = sorted(find_coordinates_of_junction(road_map, Driver.x, Driver.y))
+        required_path = junction_paths[(current_direction, new_direction)]
+        current_location = coordinates_of_junction.index([self.x, self.y])
+
+        # If they just have to turn one step
+        if len(required_path) == 1:
+            self.x += directions[new_direction][0]
+            self.y += directions[new_direction][1]
+            self.direction = new_direction
+            self.change_direction = False
+
+        for step in range(0, len(required_path) - 1):
+            if current_location == required_path[step]:
+                x_movement = required_path[step + 1][0] - required_path[step][0]
+                y_movement = required_path[step + 1][1] - required_path[step][1]
+                self.x += x_movement
+                self.y += y_movement

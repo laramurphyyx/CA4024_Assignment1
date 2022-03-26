@@ -32,7 +32,6 @@ class Driver:
         self.x = coordinates[0]
         self.y = coordinates[1]
         self.direction = initialise_driver_direction(self.x, self.y, road_map)
-        self.next_direction = self.direction
         self.change_direction = False
 
     def move_forward(self):
@@ -43,18 +42,62 @@ class Driver:
         new_x = self.x + x_move
         new_y = self.y + y_move
 
+        # If the drivers next step is not a junction, move forward
+        # if new_x > 0 and new_x < 50 and new_y > 0 and new_y < 50:
         if road_map[new_x][new_y] != 3:
             self.x = new_x
             self.y = new_y
 
-        if new_x > 0 and new_x < 50 and new_y >0 and new_y < 50:
-            if road_map[new_x][new_y] == 3:
-                #print("New x is " + str(new_x))
-                #print("New y is " + str(new_y))
-                #print("Road map at [x, y] is " + str(road_map[new_x][new_y]))
-                print(find_junction_direction_options(road_map, new_x, new_y))
+        # If the drivers next step is a junction, 
+        elif new_x > 0 and new_x < 50 and new_y > 0 and new_y < 50:
+            print("elif statement passed at line 54")
+            if road_map[self.x][self.y] != 3 and road_map[new_x][new_y] == 3:
+                print("Second if statement passed")
+                # Finding the directions the driver can go (can't turn back on itself)
+                possible_directions = find_junction_direction_options(road_map, new_x, new_y)
+                possible_directions.remove(opposite_directions[self.direction])
+                self.change_direction = random.choice(possible_directions)
+                self.x = new_x
+                self.y = new_y
 
-        
+
+        # If the driver is on a junction, figure out its next step
+        else:
+            self.move_driver_on_junction(road_map)
+
+    def move_driver_on_junction(self, road_map):
+        current_direction = self.direction
+        new_direction = self.change_direction
+
+        if current_direction == new_direction or new_direction==False:
+            self.x += directions[current_direction][0]
+            self.y += directions[current_direction][1]
+
+        else:
+            coordinates_of_junction = sorted(find_coordinates_of_junction(road_map, self.x, self.y))
+            required_path = junction_paths[(current_direction, new_direction)]
+            current_location = coordinates_of_junction.index([self.x, self.y])
+
+            # If they just have to turn one step
+            if len(required_path) == 1:
+                self.x += directions[new_direction][0]
+                self.y += directions[new_direction][1]
+                self.direction = new_direction
+                self.change_direction = False
+
+            for step in range(0, len(required_path) - 1):
+                if current_location == step:
+                    #x_movement = required_path[step + 1][0] - required_path[step][0]
+                    #y_movement = required_path[step + 1][1] - required_path[step][1]
+                    #self.x += x_movement
+                    #self.y += y_movement
+                    print("Successful until end of move_driver_on_junction()")
+                    print("coordinates_of_junction[required_path[step]][0] is " + str(coordinates_of_junction[required_path[step]][0]))
+                    self.x = coordinates_of_junction[required_path[step]][0]
+                    self.y = coordinates_of_junction[required_path[step]][1]
+
+
+               
 
 def initialise():
 
