@@ -12,6 +12,7 @@ number_drivers = 10
 drivers = []
 locations = []
 crashes = []
+all_crashes = []
 asleep = []
 directions = {
     'Right' : [0, 1],
@@ -167,9 +168,18 @@ def observe():
 
     plt.cla()
     plt.imshow(road_map)
-    drivers_x =  [driver.x for driver in drivers]
-    drivers_y =  [driver.y for driver in drivers]
+
+    drivers_x = []
+    drivers_y = []
+    number_cars_crashed = 0
+    for location in locations:
+        if location != [0,0]:
+            drivers_x.append(location[0])
+            drivers_y.append(location[1])
+        else:
+            number_cars_crashed += 1
     plt.scatter(drivers_y, drivers_x, marker="s", color="red")
+    plt.scatter([1], [1], s=number_cars_crashed*10, marker="X", color="white")
     plt.show()
 
 def update():
