@@ -50,7 +50,6 @@ class Driver:
 
         # If the drivers next step is a junction, 
         elif road_map[self.x][self.y] != 3 and road_map[new_x][new_y] == 3:
-            print("Second if statement passed")
             # Finding the directions the driver can go (can't turn back on itself)
             possible_directions = find_junction_direction_options(road_map, new_x, new_y)
             possible_directions.remove(opposite_directions[self.direction])
@@ -85,8 +84,6 @@ class Driver:
             else:
                 for step in range(0, len(required_path) - 1):
                     if current_location == required_path[step]:
-                        print("Successful until end of move_driver_on_junction()")
-                        print("coordinates_of_junction[required_path[step]][0] is " + str(coordinates_of_junction[required_path[step]][0]))
                         self.x = coordinates_of_junction[required_path[step + 1]][0]
                         self.y = coordinates_of_junction[required_path[step + 1]][1]
 

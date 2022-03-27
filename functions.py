@@ -188,10 +188,7 @@ def find_junction_direction_options(road_map, x, y):
 
         if x == 0:
             # This is either junction on the top horizontal road
-            print("x is " + str(x))
             for y_coord in [y-1, y-2]:
-                print("y_coord is " + str(y_coord))
-                print("road_map[x][y_coord] is " + str(road_map[x][y_coord]))
                 if road_map[x][y_coord] == 1:
                     return ['Left', 'Down']
                 elif road_map[x][y_coord] == 0:
