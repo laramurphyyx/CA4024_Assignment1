@@ -14,6 +14,7 @@ locations = []
 crashes = []
 all_crashes = []
 asleep = []
+tiredness_scores = {}
 directions = {
     'Right' : [0, 1],
     'Left' : [0, -1],
@@ -134,7 +135,7 @@ class Driver:
             if current_location == required_path[-1]:
                 self.x += directions[self.change_direction][0]
                 self.y += directions[self.change_direction][1]
-                self.tiredness += 0.001
+                self.tiredness += 0.005
                 self.direction = new_direction
                 self.change_direction = False
 
@@ -143,7 +144,7 @@ class Driver:
                     if current_location == required_path[step]:
                         self.x = coordinates_of_junction[required_path[step + 1]][0]
                         self.y = coordinates_of_junction[required_path[step + 1]][1]
-                        self.tiredness += 0.001
+                        self.tiredness += 0.005
                         self.direction = new_direction
 
 def initialise():
@@ -167,6 +168,20 @@ def initialise():
         locations.append([driver.x, driver.y])
 
 def observe():
+
+    ## Plotting the tiredness scores
+    
+    for i in range(0, number_drivers):
+        driver = drivers[i]
+        if i in tiredness_scores:
+            tiredness_scores[i].append(driver.tiredness)
+        else:
+            tiredness_scores[i] = [driver.tiredness]
+    for i in range(0, number_drivers):
+        plt.plot(list(np.arange(0, len(tiredness_scores[i]))), tiredness_scores[i])
+    plt.show()
+        
+    ## Plotting the simulation
 
     plt.cla()
     plt.imshow(road_map)
