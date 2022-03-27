@@ -92,10 +92,7 @@ class Driver:
                 if coordinate in locations:
                     junction_in_use = True
 
-            if junction_in_use:
-                if random.random() < self.tiredness:
-                    self.x = new_x
-                    self.y = new_y
+            if junction_in_use and random.random() > self.tiredness:
                 self.tiredness += 0.15
 
             else:
@@ -163,7 +160,7 @@ def observe():
     plt.imshow(road_map)
     drivers_x =  [driver.x for driver in drivers]
     drivers_y =  [driver.y for driver in drivers]
-    plt.scatter(drivers_y, drivers_x, color="red")
+    plt.scatter(drivers_y, drivers_x, marker="s", color="red")
     plt.show()
 
 def update():
