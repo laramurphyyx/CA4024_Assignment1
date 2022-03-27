@@ -166,9 +166,9 @@ def find_coordinates_of_junction(road_map, x, y):
     coordinates_of_junction = []
 
     for x_coord in [x-1, x, x+1]:
-        if x_coord > 0 and x_coord < 50:
+        if x_coord >= 0 and x_coord < 50:
             for y_coord in [y-1, y, y+1]:
-                if y_coord > 0 and y_coord < 50:
+                if y_coord >= 0 and y_coord < 50:
                     if road_map[x_coord][y_coord] == 3:
                         coordinates_of_junction.append([x_coord, y_coord])
 
@@ -222,31 +222,3 @@ def find_junction_direction_options(road_map, x, y):
                     return ['Left', 'Down']
     else:
         return ['Right', 'Left', 'Up', 'Down']
-
-def move_driver_on_junction2(Driver, road_map):
-    current_direction = Driver.direction
-    new_direction = Driver.change_direction
-
-    if current_direction == new_direction:
-        self.x += directions[current_direction][0]
-        self.y += directions[current_direction][1]
-
-    else:
-
-        coordinates_of_junction = sorted(find_coordinates_of_junction(road_map, Driver.x, Driver.y))
-        required_path = junction_paths[(current_direction, new_direction)]
-        current_location = coordinates_of_junction.index([self.x, self.y])
-
-        # If they just have to turn one step
-        if len(required_path) == 1:
-            self.x += directions[new_direction][0]
-            self.y += directions[new_direction][1]
-            self.direction = new_direction
-            self.change_direction = False
-
-        for step in range(0, len(required_path) - 1):
-            if current_location == required_path[step]:
-                x_movement = required_path[step + 1][0] - required_path[step][0]
-                y_movement = required_path[step + 1][1] - required_path[step][1]
-                self.x += x_movement
-                self.y += y_movement
