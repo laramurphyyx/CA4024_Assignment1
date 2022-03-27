@@ -12,6 +12,7 @@ number_drivers = 10
 drivers = []
 locations = []
 crashes = []
+asleep = []
 directions = {
     'Right' : [0, 1],
     'Left' : [0, -1],
@@ -56,6 +57,10 @@ class Driver:
         if [self.x, self.y] in crashes or (road_map[self.x][self.y] == 0) or self.x < 0 or self.x >= 50 or self.y < 0 or self.y >= 50:
             self.x = 0
             self.y = 0
+
+        # If the driver falls asleep
+        elif self.tiredness >= 1:
+            pass
 
         # If there is a car in front, don't go
         elif [new_x, new_y] in locations:
@@ -102,6 +107,7 @@ class Driver:
                 self.change_direction = random.choice(possible_directions)
                 self.x = new_x
                 self.y = new_y
+                self.tiredness += 0.005
 
         # If the driver is on a junction, figure out its next step
         else:
@@ -114,6 +120,7 @@ class Driver:
         if current_direction == new_direction or new_direction==False:
             self.x += directions[current_direction][0]
             self.y += directions[current_direction][1]
+            self.tiredness += 0.005
 
         else:
             coordinates_of_junction = sorted(find_coordinates_of_junction(road_map, self.x, self.y))
@@ -124,6 +131,7 @@ class Driver:
             if current_location == required_path[-1]:
                 self.x += directions[self.change_direction][0]
                 self.y += directions[self.change_direction][1]
+                self.tiredness += 0.001
                 self.direction = new_direction
                 self.change_direction = False
 
@@ -132,6 +140,7 @@ class Driver:
                     if current_location == required_path[step]:
                         self.x = coordinates_of_junction[required_path[step + 1]][0]
                         self.y = coordinates_of_junction[required_path[step + 1]][1]
+                        self.tiredness += 0.001
                         self.direction = new_direction
 
 def initialise():
@@ -165,7 +174,7 @@ def observe():
 
 def update():
 
-    global locations, crashes
+    global locations, crashes, asleep
     
     for driver in drivers:
         driver.move_forward()
@@ -177,16 +186,15 @@ def update():
     unique_locations = []
     crashes = []
     for location in locations:
-        # if the car has come off the road
-        if location[0] < 0 or location[0] >= 50 or location[1] < 0 or location [1] >=50 or road_map[location[0]][location[1]]==0:
-            crashes.append(location)
-        if location in unique_locations:
-            crashes.append(location)
-        else:
-            unique_locations.append(location)
+        if location != [0,0]:
+            if location in unique_locations:
+                crashes.append(location)
+            else:
+                unique_locations.append(location)
 
     for crash in crashes:
-        if crash != [0, 0]:
-            print("Crash at " + str(crash))
+        print("Crash at " + str(crash))
+
+
 
 pycxsimulator.GUI().start(func=[initialise, observe, update])
