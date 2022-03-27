@@ -11,6 +11,7 @@ from functions import *
 number_drivers = 10
 drivers = []
 locations = []
+crashes = []
 directions = {
     'Right' : [0, 1],
     'Left' : [0, -1],
@@ -38,6 +39,7 @@ class Driver:
         self.y = coordinates[1]
         self.direction = initialise_driver_direction(self.x, self.y, road_map)
         self.change_direction = False
+        self.tiredness = 0.25
 
     def move_forward(self):
         direction = directions[self.direction]
@@ -50,15 +52,29 @@ class Driver:
         left_car_position_x = new_x + x_move + directions[left_of_directions[self.direction]][0]
         left_car_position_y = new_y + y_move + directions[left_of_directions[self.direction]][1]
 
+        # If the car has already crashed, it can't move
+        if [self.x, self.y] in crashes or (road_map[self.x][self.y] == 0) or self.x < 0 or self.x >= 50 or self.y < 0 or self.y >= 50:
+            self.x = 0
+            self.y = 0
+
         # If there is a car in front, don't go
-        if [new_x, new_y] in locations:
-            pass
-            #print(str(new_x) + str(new_y) + " (in front of me) in locations")
+        elif [new_x, new_y] in locations:
+            if road_map[self.x][self.y] != 3:
+                if random.random() < self.tiredness:
+                    self.x = new_x
+                    self.y = new_y
+            self.tiredness += 0.15
 
         # If there is a car enterring from the left of the junction, don't go
         elif new_x >= 0 and new_x < 50 and new_y >= 0 and new_y < 50 and [left_car_position_x, left_car_position_y] in locations and road_map[new_x][new_y] == 3:
-            pass
-            #print(str(left_car_position_x) + str(left_car_position_y) + " (in front to the left of me) in locations")
+            if road_map[self.x][self.y] != 3:
+                if random.random() < self.tiredness:
+                    possible_directions = find_junction_direction_options(road_map, new_x, new_y)
+                    possible_directions.remove(opposite_directions[self.direction])
+                    self.change_direction = random.choice(possible_directions)
+                    self.x = new_x
+                    self.y = new_y
+            self.tiredness += 0.15
 
         # If the drivers next step is not a junction, move forward
         # if new_x > 0 and new_x < 50 and new_y > 0 and new_y < 50:
@@ -70,14 +86,17 @@ class Driver:
         elif road_map[self.x][self.y] != 3 and road_map[new_x][new_y] == 3:
 
             # If there is already someone in the junction, don't go
-            coordinates_of_junction = find_coordinates_of_junction(road_map, self.x, self.y)
+            coordinates_of_junction = find_coordinates_of_junction(road_map, new_x, new_y)
             junction_in_use = False
             for coordinate in coordinates_of_junction:
                 if coordinate in locations:
                     junction_in_use = True
 
             if junction_in_use:
-                pass
+                if random.random() < self.tiredness:
+                    self.x = new_x
+                    self.y = new_y
+                self.tiredness += 0.15
 
             else:
                 # Finding the directions the driver can go (can't turn back on itself)
@@ -149,7 +168,7 @@ def observe():
 
 def update():
 
-    global locations
+    global locations, crashes
     
     for driver in drivers:
         driver.move_forward()
@@ -158,19 +177,19 @@ def update():
     for driver in drivers:
         locations.append([driver.x, driver.y])
 
-    print(locations)
-
     unique_locations = []
     crashes = []
     for location in locations:
+        # if the car has come off the road
+        if location[0] < 0 or location[0] >= 50 or location[1] < 0 or location [1] >=50 or road_map[location[0]][location[1]]==0:
+            crashes.append(location)
         if location in unique_locations:
             crashes.append(location)
         else:
             unique_locations.append(location)
 
     for crash in crashes:
-        l = list(map(lambda x: x.replace('Pant', 'Ishan'), l))
-        locations = list(map(lambda x: x.replace(crash, [0,0]), locations))
-        print("Crash at " + str(crash))
+        if crash != [0, 0]:
+            print("Crash at " + str(crash))
 
 pycxsimulator.GUI().start(func=[initialise, observe, update])
