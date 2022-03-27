@@ -118,16 +118,6 @@ def initialise_driver_position(road_map):
     x = coordinates[0]
     y = coordinates[1]
 
-    ###
-    ### Re-assigning the position if they begin at a junction
-    ###
-
-    if x - 1 > 0 and x + 1 < 50 and y - 1 > 0 and y + 1 < 50:
-        while road_map[x-1][y] == 3 or road_map[x+1][y] == 3 or road_map[x][y-1] == 3 or road_map[x][y+1] == 3:
-            coordinates = random.choice(all_roads)
-            x = coordinates[0]
-            y = coordinates[1]
-
     return [x, y]
 
 def initialise_driver_direction(x, y, road_map):
