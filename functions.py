@@ -6,18 +6,7 @@ import random
 import numpy as np
 import pandas as pd
 
-directions = {
-    'Right' : [0, 1],
-    'Left' : [0, -1],
-    'Up' : [-1, 0],
-    'Down' : [1, 0]
-}
-opposite_directions = {
-    'Right' : 'Left',
-    'Left' : 'Right',
-    'Up' : 'Down',
-    'Down' : 'Up'
-}
+map_size = 50
 
 junction_paths = {
     ("Left", "Up") : [3, 2, 0],
@@ -59,23 +48,23 @@ def create_random_road_map():
     ### - Junctions are represented by a 3
     ###
 
-    road_map = np.zeros((50,50))
+    road_map = np.zeros((map_size,map_size))
 
     for x_coord in horizontal_roads:
-        for y_coord in range(0,50):
+        for y_coord in range(0,map_size):
             road_map[x_coord][y_coord] += 1
             road_map[x_coord + 1][y_coord] += 1
 
     for y_coord in vertical_roads:
-        for x_coord in range(0,50):
+        for x_coord in range(0,map_size):
             road_map[x_coord][y_coord] += 2
             road_map[x_coord][y_coord + 1] += 2
 
     # Adding top and bottom horizontal edge roads
     left_vertical_road = min(vertical_roads)
     right_vertical_road = max(vertical_roads) + 1
-    for x_coord in [0, 48]:
-        for y_coord in range(0,50):
+    for x_coord in [0, map_size-2]:
+        for y_coord in range(0,map_size):
             if y_coord >= left_vertical_road and y_coord <= right_vertical_road:
                 road_map[x_coord][y_coord] += 1
                 road_map[x_coord + 1][y_coord] += 1
@@ -83,17 +72,20 @@ def create_random_road_map():
     # Adding left and right vertical edge roads
     top_horizontal_road = min(horizontal_roads)
     bottom_horizontal_road = max(horizontal_roads) + 1
-    for y_coord in [0, 48]:
-        for x_coord in range(0,50):
+    for y_coord in [0, map_size-2]:
+        for x_coord in range(0,map_size):
             if x_coord >= top_horizontal_road and x_coord <= bottom_horizontal_road:
                 road_map[x_coord][y_coord] += 2
                 road_map[x_coord][y_coord + 1] += 2
 
-    ###
-    ### Saving the result of this randomised road map to a CSV file
-    ###
-
     return road_map
+
+def check_coordinates_in_boundaries(x, y):
+    if x < 0 or x >= map_size:
+        return False
+    elif y < 0 or y >= map_size:
+        return False
+    return True
 
 def initialise_driver_position(road_map):
 
@@ -156,9 +148,8 @@ def find_coordinates_of_junction(road_map, x, y):
     coordinates_of_junction = []
 
     for x_coord in [x-1, x, x+1]:
-        if x_coord >= 0 and x_coord < 50:
             for y_coord in [y-1, y, y+1]:
-                if y_coord >= 0 and y_coord < 50:
+                if check_coordinates_in_boundaries(x_coord, y_coord):
                     if road_map[x_coord][y_coord] == 3:
                         coordinates_of_junction.append([x_coord, y_coord])
 

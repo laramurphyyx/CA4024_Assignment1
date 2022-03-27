@@ -55,13 +55,15 @@ class Driver:
         left_car_position_y = new_y + y_move + directions[left_of_directions[self.direction]][1]
 
         # If the car has already crashed, it can't move
-        if [self.x, self.y] in crashes or (road_map[self.x][self.y] == 0) or self.x < 0 or self.x >= 50 or self.y < 0 or self.y >= 50:
+        if [self.x, self.y] in crashes or (road_map[self.x][self.y] == 0):
             self.x = 0
             self.y = 0
 
         # If the driver falls asleep
         elif self.tiredness >= 1:
-            pass
+            if [self.x, self.y] not in asleep:
+                asleep.append([self.x, self.y])
+                print("Driver has fallen asleep at " + str([self.x, self.y]))
 
         # If there is a car in front, don't go
         elif [new_x, new_y] in locations:
@@ -179,7 +181,8 @@ def observe():
         else:
             number_cars_crashed += 1
     plt.scatter(drivers_y, drivers_x, marker="s", color="red")
-    plt.scatter([1], [1], s=number_cars_crashed*10, marker="X", color="white")
+    plt.text(0, -3, "Cars crashed: " + str(number_cars_crashed))
+    plt.text(0, -1, "Drivers asleep: " + str(len(asleep)))
     plt.show()
 
 def update():
