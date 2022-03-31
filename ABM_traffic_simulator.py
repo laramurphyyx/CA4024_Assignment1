@@ -8,6 +8,7 @@ from functions import *
 ### Assigning Simulation Variables
 ###
 
+map_size = 50
 number_drivers = 10
 drivers = []
 locations = []
@@ -240,5 +241,13 @@ def update():
 
     for crash in crashes:
         print("Crash at " + str(crash))
+
+# Accepting customised map size
+input_map_size = input("Enter a map size (or leave empty to use the default map size of 50):")
+while input_map_size and int(input_map_size) < 15:
+    input_map_size = input("Map size is too small. Please enter a map size greater than 15 (or leave empty to use the default map size of 50):")
+if input_map_size:
+    map_size = int(input_map_size)
+    set_map_size(map_size)
 
 pycxsimulator.GUI().start(func=[initialise, observe, update])

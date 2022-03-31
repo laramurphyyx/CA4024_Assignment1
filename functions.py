@@ -6,8 +6,6 @@ import random
 import numpy as np
 import pandas as pd
 
-
-
 junction_paths = {
     ("Left", "Up") : [3, 2, 0],
     ("Left", "Down") : [3],
@@ -18,6 +16,13 @@ junction_paths = {
     ("Down", "Left") : [1, 3, 2],
     ("Down", "Right") : [1],
     }
+
+global map_size
+map_size = 50
+
+def set_map_size(set_map_size):
+    global map_size
+    map_size = set_map_size
 
 def create_random_road_map():
 
@@ -175,7 +180,7 @@ def find_junction_direction_options(road_map, x, y):
                 elif road_map[x][y_coord] == 0:
                     return ['Right', 'Down']
 
-        elif x == 49:
+        elif x == map_size-1:
             # This is either junction on the bottom horizontal road
             for y_coord in [y-1, y-2]:
                 if road_map[x][y_coord] == 1:
@@ -191,7 +196,7 @@ def find_junction_direction_options(road_map, x, y):
                 elif road_map[x_coord][y] == 0:
                     return ['Right', 'Down']
 
-        elif y == 49:
+        elif y == map_size-1:
             # This is either junction on the bottom vertical road
             for x_coord in [x-1, x-2]:
                 if road_map[x_coord][y] == 2:
