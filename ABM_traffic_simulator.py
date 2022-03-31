@@ -43,6 +43,7 @@ class Driver:
         self.direction = initialise_driver_direction(self.x, self.y, road_map)
         self.change_direction = False
         self.tiredness = 0.25
+        self.time_asleep = 0
 
     def move_forward(self):
         direction = directions[self.direction]
@@ -57,14 +58,23 @@ class Driver:
 
         # If the car has already crashed, it can't move
         if [self.x, self.y] in crashes or (road_map[self.x][self.y] == 0):
+            if [self.x, self.y] in asleep:
+                asleep.remove([self.x, self.y])
             self.x = 0
             self.y = 0
+
+        # If the driver is asleep, see if they will wake up
+        elif random.random() < self.time_asleep / 500:
+            self.tiredness = 0
+            asleep.remove([self.x, self.y])
+            self.time_asleep = 0
 
         # If the driver falls asleep
         elif self.tiredness >= 1:
             if [self.x, self.y] not in asleep:
                 asleep.append([self.x, self.y])
                 print("Driver has fallen asleep at " + str([self.x, self.y]))
+            self.time_asleep += 1
 
         # If there is a car in front, don't go
         elif [new_x, new_y] in locations:
