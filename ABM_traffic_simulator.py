@@ -180,6 +180,9 @@ def initialise():
 def observe():
 
     ## Plotting the tiredness scores
+
+    plt.subplot(2, 1, 2)
+    plt.cla()
     
     for i in range(0, number_drivers):
         driver = drivers[i]
@@ -189,10 +192,14 @@ def observe():
             tiredness_scores[i] = [driver.tiredness]
     for i in range(0, number_drivers):
         plt.plot(list(np.arange(0, len(tiredness_scores[i]))), tiredness_scores[i])
-    plt.show()
+    plt.title("Tiredness Scores for Each Driver")
+    plt.xlabel("Time (in steps)")
+    plt.ylabel("Tiredness Scores")
+    plt.ylim([-0.01, 1.01])
         
     ## Plotting the simulation
 
+    plt.subplot(2, 1, 1)
     plt.cla()
     plt.imshow(road_map)
 
@@ -208,7 +215,8 @@ def observe():
     plt.scatter(drivers_y, drivers_x, marker="s", color="red")
     plt.text(0, -3, "Cars crashed: " + str(number_cars_crashed))
     plt.text(0, -1, "Drivers asleep: " + str(len(asleep)))
-    plt.show()
+
+    plt.tight_layout()
 
 def update():
 
@@ -232,7 +240,5 @@ def update():
 
     for crash in crashes:
         print("Crash at " + str(crash))
-
-print(random.uniform(0, 0.5))
 
 pycxsimulator.GUI().start(func=[initialise, observe, update])
