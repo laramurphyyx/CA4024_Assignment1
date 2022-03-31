@@ -6,7 +6,7 @@ import random
 import numpy as np
 import pandas as pd
 
-map_size = 50
+
 
 junction_paths = {
     ("Left", "Up") : [3, 2, 0],
@@ -29,16 +29,16 @@ def create_random_road_map():
     horizontal_roads = []
     vertical_roads = []
 
-    horizontal_roads.append(random.randint(5, 45))
-    horizontal_road = random.randint(5, 45)
+    horizontal_roads.append(random.randint(5, map_size-5))
+    horizontal_road = random.randint(5, map_size-5)
     while horizontal_road - horizontal_roads[0] in range(-5,5):
-        horizontal_road = random.randint(5, 45)
+        horizontal_road = random.randint(5, map_size-5)
     horizontal_roads.append(horizontal_road)
 
-    vertical_roads.append(random.randint(5, 45))
-    vertical_road = random.randint(5, 45)
+    vertical_roads.append(random.randint(5, map_size-5))
+    vertical_road = random.randint(5, map_size-5)
     while vertical_road - vertical_roads[0] in range(-5,5):
-        vertical_road = random.randint(5, 45)
+        vertical_road = random.randint(5, map_size-5)
     vertical_roads.append(vertical_road)
 
     ###
