@@ -42,7 +42,7 @@ class Driver:
         self.y = coordinates[1]
         self.direction = initialise_driver_direction(self.x, self.y, road_map)
         self.change_direction = False
-        self.tiredness = 0.25
+        self.tiredness = random.uniform(0, 0.5)
         self.time_asleep = 0
 
     def move_forward(self):
@@ -64,7 +64,7 @@ class Driver:
             self.y = 0
 
         # If the driver is asleep, see if they will wake up
-        elif random.random() < self.time_asleep / 500:
+        elif random.random() < self.time_asleep / (10*map_size):
             self.tiredness = 0
             asleep.remove([self.x, self.y])
             self.time_asleep = 0
@@ -82,10 +82,10 @@ class Driver:
                 if random.random() < self.tiredness:
                     self.x = new_x
                     self.y = new_y
-            self.tiredness += 0.15
+            self.tiredness += random.uniform(0, 0.2)
 
         # If there is a car enterring from the left of the junction, don't go
-        elif new_x >= 0 and new_x < 50 and new_y >= 0 and new_y < 50 and [left_car_position_x, left_car_position_y] in locations and road_map[new_x][new_y] == 3:
+        elif check_coordinates_in_boundaries(new_x, new_y) and [left_car_position_x, left_car_position_y] in locations and road_map[new_x][new_y] == 3:
             if road_map[self.x][self.y] != 3:
                 if random.random() < self.tiredness:
                     possible_directions = find_junction_direction_options(road_map, new_x, new_y)
@@ -93,7 +93,7 @@ class Driver:
                     self.change_direction = random.choice(possible_directions)
                     self.x = new_x
                     self.y = new_y
-            self.tiredness += 0.15
+            self.tiredness += random.uniform(0, 0.2)
 
         # If the drivers next step is not a junction, move forward
         # if new_x > 0 and new_x < 50 and new_y > 0 and new_y < 50:
@@ -112,7 +112,7 @@ class Driver:
                     junction_in_use = True
 
             if junction_in_use and random.random() > self.tiredness:
-                self.tiredness += 0.15
+                self.tiredness += random.uniform(0, 0.2)
 
             else:
                 # Finding the directions the driver can go (can't turn back on itself)
@@ -121,7 +121,7 @@ class Driver:
                 self.change_direction = random.choice(possible_directions)
                 self.x = new_x
                 self.y = new_y
-                self.tiredness += 0.005
+                self.tiredness += random.uniform(0, 0.01)
 
         # If the driver is on a junction, figure out its next step
         else:
@@ -134,7 +134,7 @@ class Driver:
         if current_direction == new_direction or new_direction==False:
             self.x += directions[current_direction][0]
             self.y += directions[current_direction][1]
-            self.tiredness += 0.005
+            self.tiredness += random.uniform(0, 0.01)
 
         else:
             coordinates_of_junction = sorted(find_coordinates_of_junction(road_map, self.x, self.y))
@@ -145,7 +145,7 @@ class Driver:
             if current_location == required_path[-1]:
                 self.x += directions[self.change_direction][0]
                 self.y += directions[self.change_direction][1]
-                self.tiredness += 0.005
+                self.tiredness += random.uniform(0, 0.01)
                 self.direction = new_direction
                 self.change_direction = False
 
@@ -154,7 +154,7 @@ class Driver:
                     if current_location == required_path[step]:
                         self.x = coordinates_of_junction[required_path[step + 1]][0]
                         self.y = coordinates_of_junction[required_path[step + 1]][1]
-                        self.tiredness += 0.005
+                        self.tiredness += random.uniform(0, 0.01)
                         self.direction = new_direction
 
 def initialise():
@@ -233,6 +233,6 @@ def update():
     for crash in crashes:
         print("Crash at " + str(crash))
 
-
+print(random.uniform(0, 0.5))
 
 pycxsimulator.GUI().start(func=[initialise, observe, update])
