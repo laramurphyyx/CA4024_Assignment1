@@ -189,7 +189,8 @@ def observe():
 
     plt.subplot(2, 1, 2)
     plt.cla()
-    
+
+    plt.plot([0, steps], [1, 1], '--', color="red", linewidth=0.5)
     for i in range(0, number_drivers):
         driver = drivers[i]
         if i in tiredness_scores:
