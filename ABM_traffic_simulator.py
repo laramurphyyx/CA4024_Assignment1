@@ -228,7 +228,7 @@ def observe():
     for crash in crashes:
         plt.plot(crash[1], crash[0], marker="*", color="orange", markersize=25)
     plt.text(map_size + 1, map_size - (map_size/10), "Cars crashed: " + str(number_cars_crashed))
-    plt.text(map_size + 1, map_size - 1, "Drivers asleep: " + str(len(asleep)))
+    plt.text(map_size + 1, map_size, "Drivers asleep: " + str(len(asleep)))
 
     plt.tight_layout()
 
