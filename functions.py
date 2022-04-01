@@ -205,3 +205,53 @@ def find_junction_direction_options(road_map, x, y):
                     return ['Left', 'Down']
     else:
         return ['Right', 'Left', 'Up', 'Down']
+
+def input_customised_map_size():
+
+    # Accepting customised map size
+    input_map_size = input("Enter a map size (or leave empty to use the default map size of 50):")
+
+    # Ensuring the map size is an integer
+    while input_map_size:
+        try:
+            int(input_map_size)
+            # Ensuring the map is not smaller than 15
+            if int(input_map_size) < 15:
+                input_map_size = input("Map size is too small. Please enter a map size greater than 15 (or leave empty to use the default map size of 50):")
+            else:
+                break
+        except:
+            input_map_size = input("Map size must be an integer. Please enter a map size (or leave empty to use the default map size of 50):")
+
+    # Ensuring map size is greater than 15
+    while input_map_size and int(input_map_size) < 15:
+        input_map_size = input("Map size is too small. Please enter a map size greater than 15 (or leave empty to use the default map size of 50):")
+
+    # Setting map size
+    if input_map_size:
+        map_size = int(input_map_size)
+        set_map_size(map_size)
+
+def input_customised_number_drivers():
+
+    # Accepting customised number of drivers
+    input_number_drivers = input("Enter a number of drivers (or leave empty to use the default number of drivers of 10):")
+
+    # Ensuring the number of drivers is an integer
+    while input_number_drivers:
+        try:
+            int(input_number_drivers)
+            # Ensuring the number of drivers can physically fit on the map
+            maximum_number_drivers = (4 * map_size) - 48
+            if int(input_number_drivers) > maximum_number_drivers:
+                input_number_drivers = input("Map cannot fit more than " + str(maximum_number_drivers) + " drivers. Please enter a smaller number (or leave empty to use the default number of drivers of 10):")
+            else:
+                break
+        except:
+            input_number_drivers = input("Number of drivers must be an integer. Please enter a number of drivers (or leave empty to use the default number of drivers of 10):")
+
+    # Setting map size
+    if input_number_drivers:
+        return int(input_number_drivers)
+    else:
+        return 10
