@@ -34,16 +34,16 @@ def create_random_road_map():
     horizontal_roads = []
     vertical_roads = []
 
-    horizontal_roads.append(random.randint(5, map_size-5))
-    horizontal_road = random.randint(5, map_size-5)
-    while horizontal_road - horizontal_roads[0] in range(-5,5):
-        horizontal_road = random.randint(5, map_size-5)
+    horizontal_roads.append(random.randint(3, map_size-3))
+    horizontal_road = random.randint(3, map_size-3)
+    while horizontal_road - horizontal_roads[0] in range(-3,3):
+        horizontal_road = random.randint(3, map_size-3)
     horizontal_roads.append(horizontal_road)
 
-    vertical_roads.append(random.randint(5, map_size-5))
-    vertical_road = random.randint(5, map_size-5)
-    while vertical_road - vertical_roads[0] in range(-5,5):
-        vertical_road = random.randint(5, map_size-5)
+    vertical_roads.append(random.randint(3, map_size-3))
+    vertical_road = random.randint(3, map_size-3)
+    while vertical_road - vertical_roads[0] in range(-3,3):
+        vertical_road = random.randint(3, map_size-3)
     vertical_roads.append(vertical_road)
 
     ###
