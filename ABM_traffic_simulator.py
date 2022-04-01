@@ -227,7 +227,7 @@ def observe():
     plt.scatter(drivers_y, drivers_x, marker="s", color="red")
     for crash in crashes:
         plt.plot(crash[1], crash[0], marker="*", color="orange", markersize=25)
-    plt.text(map_size + 1, map_size - 5, "Cars crashed: " + str(number_cars_crashed))
+    plt.text(map_size + 1, map_size - (map_size/10), "Cars crashed: " + str(number_cars_crashed))
     plt.text(map_size + 1, map_size - 1, "Drivers asleep: " + str(len(asleep)))
 
     plt.tight_layout()
@@ -257,7 +257,7 @@ def update():
 
     steps += 1
 
-input_customised_map_size()
+map_size = input_customised_map_size()
 number_drivers = input_customised_number_drivers()
 
 pycxsimulator.GUI().start(func=[initialise, observe, update])

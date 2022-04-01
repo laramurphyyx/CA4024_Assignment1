@@ -231,6 +231,10 @@ def input_customised_map_size():
     if input_map_size:
         map_size = int(input_map_size)
         set_map_size(map_size)
+        return map_size
+    else:
+        return 50
+
 
 def input_customised_number_drivers():
 
