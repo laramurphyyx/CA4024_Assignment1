@@ -14,6 +14,7 @@ locations = []
 crashes = []
 all_crashes = []
 asleep = []
+steps = 0
 tiredness_scores = {}
 directions = {
     'Right' : [0, 1],
@@ -44,6 +45,7 @@ class Driver:
         self.change_direction = False
         self.tiredness = random.uniform(0, 0.5)
         self.time_asleep = 0
+        self.time_of_crash = None
 
     def move_forward(self):
         direction = directions[self.direction]
@@ -62,9 +64,11 @@ class Driver:
                 asleep.remove([self.x, self.y])
             self.x = 0
             self.y = 0
+            if not self.time_of_crash:
+                self.time_of_crash = steps
 
         # If the driver is asleep, see if they will wake up
-        elif random.random() < self.time_asleep / (10*map_size):
+        elif random.uniform(100, 500) < self.time_asleep:
             self.tiredness = 0
             asleep.remove([self.x, self.y])
             self.time_asleep = 0
@@ -159,7 +163,7 @@ class Driver:
 
 def initialise():
 
-    global road_map, drivers, locations
+    global road_map, drivers, locations, steps
 
     ## Initialising a random road map and lists of drivers and their locations
     road_map = create_random_road_map()
@@ -177,6 +181,8 @@ def initialise():
         drivers.append(driver)
         locations.append([driver.x, driver.y])
 
+    steps += 1
+
 def observe():
 
     ## Plotting the tiredness scores
@@ -191,11 +197,16 @@ def observe():
         else:
             tiredness_scores[i] = [driver.tiredness]
     for i in range(0, number_drivers):
-        plt.plot(list(np.arange(0, len(tiredness_scores[i]))), tiredness_scores[i])
+        if drivers[i].time_of_crash:
+            time_of_crash = drivers[i].time_of_crash
+            plt.plot(list(np.arange(0, time_of_crash)), tiredness_scores[i][:time_of_crash])
+            plt.plot(drivers[i].time_of_crash, drivers[i].tiredness, marker="*", color="orange", markersize=20)
+        else:
+            plt.plot(list(np.arange(0, steps)), tiredness_scores[i])
     plt.title("Tiredness Scores for Each Driver")
     plt.xlabel("Time (in steps)")
     plt.ylabel("Tiredness Scores")
-    plt.ylim([-0.01, 1.01])
+    plt.ylim([-0.05, 1.15])
         
     ## Plotting the simulation
 
@@ -213,14 +224,16 @@ def observe():
         else:
             number_cars_crashed += 1
     plt.scatter(drivers_y, drivers_x, marker="s", color="red")
-    plt.text(0, -3, "Cars crashed: " + str(number_cars_crashed))
-    plt.text(0, -1, "Drivers asleep: " + str(len(asleep)))
+    for crash in crashes:
+        plt.plot(crash[1], crash[0], marker="*", color="orange", markersize=25)
+    plt.text(map_size + 1, map_size - 5, "Cars crashed: " + str(number_cars_crashed))
+    plt.text(map_size + 1, map_size - 1, "Drivers asleep: " + str(len(asleep)))
 
     plt.tight_layout()
 
 def update():
 
-    global locations, crashes, asleep
+    global locations, crashes, asleep, steps
     
     for driver in drivers:
         driver.move_forward()
@@ -240,6 +253,8 @@ def update():
 
     for crash in crashes:
         print("Crash at " + str(crash))
+
+    steps += 1
 
 input_customised_map_size()
 number_drivers = input_customised_number_drivers()
